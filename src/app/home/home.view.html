@@ -1,7 +1,142 @@
-<span ng-bind="vm.greeting"></span>
+<div>
+    <md-button class="view-button md-primary" ng-click="vm.viewSelected()">View Selected</md-button>
+    <md-button ng-if="vm.searching" class="md-primary" ng-click="vm.goHome()">Go Back</md-button>
+    <form ng-submit="vm.search(vm.title)" style="padding-top: 20px;">
+        <md-input-container class="search-input">
+            <label>Movie Title</label>
+            <input type="string" ng-model="vm.title">
+        </md-input-container>
+    </form>
+    <md-progress-linear ng-if="vm.showProgress" md-mode="indeterminate"></md-progress-linear>
+</div>
 
-<button ng-click="vm.showSampleConstant()">{{ 'home.button' | translate }}</button>
+<div ng-if="vm.searching">
+        <md-grid-list
+            md-cols-gt-md="5" md-cols="3" md-cols-lg="4" md-cols-md="3" md-cols-sm="2" md-cols-xs="1"
+            md-row-height-gt-md="350px" md-row-height="300px"
+            md-gutter-gt-md="8px" md-gutter-md="4px" md-gutter="2px">
+            <md-grid-tile
+                ng-repeat="movie in vm.searchMovies"
+                md-colspan-gt-sm="1"
+                md-rowspan-gt-sm="1"
+                id="tile-{{$index}}" ng-click="vm.select($index, movie)">
+                <div class="movie-tile-container"
+                    ng-style="{
+                        'background': 'url(https://image.tmdb.org/t/p/w1280/' + movie.backdrop_path + ')',
+                        'background-repeat': 'no-repeat',
+                        'background-size': 'cover',
+                        'background-position': 'center'
+                    }">
+                    <div id="title-{{$index}}" layout="column" layout-align="end stretch" class="movie-tile-sm">
+                        <span class="add-icon"><i class="fas fa-plus"></i></span>
+                        <div class="movie-tile-sm-title">
+                            <p>{{movie.title}}</p>
+                        </div>
+                    </div>
+                    <div id="title-big-{{$index}}" class="display movie-tile-lg" layout="row" layout-align="center center">
+                        <div flex="5"></div>
+                        <div id="movie-info-container-{{$index}}" flex="35" class="movie-tile-lg-info-container">
+                            <div>
+                                <p class="movie-title-lg">
+                                    {{vm.selectedMovie.title}}
+                                    <a class="imdb-logo" ng-href="http://www.imdb.com/title/{{vm.selectedMovie.imdb_id}}/" target="_blank">
+                                        <i class="fab fa-imdb"></i>
+                                    </a>
+                                </p>
+                                <p class="movie-subtitle-lg">{{vm.selectedMovie.runtime}}m | {{vm.selectedMovie.genreString}} | {{vm.selectedMovie.release_date}} </p>
+                                <p class="movie-subtitle-lg">{{vm.selectedMovie.vote_average}}/10</p>
+                                <p class="movie-overview-lg">{{vm.selectedMovie.overview}}</p>
+                                <p ng-show="vm.showMovieSite">
+                                    <a href="{{vm.selectedMovie.homepage}}" target="_blank">{{vm.selectedMovie.homepage}}</a>
+                                </p>
+                            </div>
+                        </div>
+                        <div id="movie-tile-lg-info-container-{{$index}}" class="movie-tile-lg-info-container" flex="55">
+                            <iframe id="movie-trailer-container-{{$index}}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <div flex="5"></div>
+                    </div>
+                </div>
+            </md-grid-tile>
+        </md-grid-list>
+</div>
 
-<button ng-click="vm.switchLanguage('en')">In English</button>
+<div ng-if="!vm.searching">
+    <md-grid-list
+        md-cols-gt-md="5" md-cols="3" md-cols-lg="4" md-cols-md="3" md-cols-sm="2" md-cols-xs="1"
+        md-row-height-gt-md="350px" md-row-height="300px"
+        md-gutter-gt-md="8px" md-gutter-md="4px" md-gutter="2px">
+        <md-grid-tile
+            ng-repeat="movie in vm.popularMovies"
+            md-colspan-gt-sm="1"
+            md-rowspan-gt-sm="1"
+            id="tile-{{$index}}" ng-click="vm.select($index, movie)">
+            <div class="movie-tile-container"
+                ng-style="{
+                    'background': 'url(https://image.tmdb.org/t/p/w1280/' + movie.backdrop_path + ')',
+                    'background-repeat': 'no-repeat',
+                    'background-size': 'cover',
+                    'background-position': 'center'
+                }">
+                <div id="title-{{$index}}" layout="column" layout-align="end stretch" class="movie-tile-sm">
+                    <span class="add-icon"><i class="fas fa-plus"></i></span>
+                    <div class="movie-tile-sm-title">
+                        <p>{{movie.title}}</p>
+                    </div>
+                </div>
+                <div id="title-big-{{$index}}" class="display movie-tile-lg" layout="row" layout-align="center center">
+                    <div flex="5"></div>
+                    <div id="movie-info-container-{{$index}}" flex="35" class="movie-tile-lg-info-container" style="border-right: 3px solid;">
+                        <div>
+                            <p class="movie-title-lg">
+                                {{vm.selectedMovie.title}}
+                                <a class="imdb-logo" ng-href="http://www.imdb.com/title/{{vm.selectedMovie.imdb_id}}/" target="_blank">
+                                    <i class="fab fa-imdb"></i>
+                                </a>
+                            </p>
+                            <p class="movie-subtitle-lg">{{vm.selectedMovie.runtime}}m | {{vm.selectedMovie.genreString}} | {{vm.selectedMovie.release_date}} </p>
+                            <p class="movie-subtitle-lg">{{vm.selectedMovie.vote_average}}/10</p>
+                            <p class="movie-overview-lg">{{vm.selectedMovie.overview}}</p>
+                            <p ng-show="vm.showMovieSite">
+                                <a href="{{vm.selectedMovie.homepage}}" target="_blank">{{vm.selectedMovie.homepage}}</a>
+                            </p>
+                        </div>
+                        <div>
+                            <md-button class="md-fab md-mini md-primary" aria-label="Add to request" ng-click="vm.addToRequest(vm.selectedMovie)">
+                                <i class="fas fa-plus"></i>
+                            </md-button>
+                        </div>
+                    </div>
+                    <div id="movie-tile-lg-info-container-{{$index}}" class="movie-tile-lg-info-container" flex="55">
+                        <iframe id="movie-trailer-container-{{$index}}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div flex="5"></div>
+                </div>
+            </div>
+        </md-grid-tile>
+    </md-grid-list>
+</div>
 
-<button ng-click="vm.switchLanguage('ru')">По-русски</button>
+<div class="footer" > 
+    <div layout="row" layout-align="center center" style="padding-top: 10px;">
+        <div ng-repeat="mov in vm.requestList" class="selected-tile"
+            ng-style="{
+                'background': 'url(https://image.tmdb.org/t/p/w1280/' + mov.backdrop_path + ')',
+                'background-repeat': 'no-repeat',
+                'background-size': 'cover',
+                'background-position': 'center'
+            }">
+            <p class="selected-title">{{mov.title}}</p>
+            <div layout="column" layout-align="center center">
+                <md-button class="md-icon-button" aria-label="Add to request" ng-click="vm.removeRequest(mov, $index)">
+                    <i class="fas fa-minus"></i>
+                </md-button>
+            </div>
+        </div>
+        <div>
+            <md-button class="md-fab md-primary" aria-label="Send Request" ng-click="vm.sendRequest()">
+                <i class="fas fa-share-square"></i>
+            </md-button>
+        </div>
+    </div>
+</div>
