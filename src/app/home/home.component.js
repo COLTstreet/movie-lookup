@@ -79,7 +79,7 @@
             console.log(parsed_json);
             vm.selectedMovie = parsed_json;
             vm.selectedMovie.genreString = "";
-            for(let i = 0; i < 2; i++) {
+            for(var i = 0; i < 2; i++) {
               if(i === 1){
                 vm.selectedMovie.genreString += vm.selectedMovie.genres[i].name;
               } else {
@@ -94,7 +94,7 @@
             }
 
             $(function() {
-                let height = $("#movie-info-container-" + index).outerHeight();
+                var height = $("#movie-info-container-" + index).outerHeight();
                 $("#movie-trailer-container-" + index).attr("src", "https://www.youtube.com/embed/" + vm.selectedMovie.videos.results[0].key);
                 $("#movie-tile-lg-info-container-" + index).css("height", height);
             });
